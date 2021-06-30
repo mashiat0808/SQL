@@ -1,0 +1,1145 @@
+---
+title: "SQL Essentials"
+output: 
+    html_document:
+      toc: true
+      toc_float: true
+---
+
+Structured Query Language, abbreviated as SQL, is a standard language for storing, manipulating and retrieving data in databases.
+
+##  What Can SQL do?
+1. SQL can execute queries against a database  
+2. SQL can retrieve data from a database  
+3. SQL can insert records in a database  
+4. SQL can update records in a database  
+5. SQL can delete records from a database  
+6. SQL can create new databases  
+7. SQL can create new tables in a database  
+8. SQL can create stored procedures in a database  
+9. SQL can create views in a database  
+10. SQL can set permissions on tables, procedures, and views  
+
+## RDBMS
+RDBMS stands for Relational Database Management System. It is the basis for SQL, and for all modern database systems such as MS SQL Server, IBM DB2, Oracle, MySQL, and Microsoft Access.The data in RDBMS is stored in database objects called tables. A table is a collection of related data entries and it consists of columns and rows.
+
+
+An exemplary data table is the storm table: 
+```{r echo=FALSE, message=FALSE, warning=FALSE} 
+library(dplyr)
+library(dbplyr)
+library(RSQLite)
+library(DT)
+library(packrat)
+library(rsconnect)
+library(rsample)
+
+x=storms[,1:11]
+x <- initial_split(x, prop = 0.50)
+x<-data.frame(x)
+datatable(x, options = list(), class = "display",
+    callback = JS("return table;"),
+    caption = NULL, filter = c("none", "bottom", "top"), escape = TRUE,
+    style = "default", width = NULL, height = NULL, elementId = NULL,
+    fillContainer = getOption("DT.fillContainer", NULL),
+    autoHideNavigation = getOption("DT.autoHideNavigation", NULL),
+    selection = c("multiple", "single", "none"), extensions = list(),
+    plugins = NULL, editable = FALSE)
+
+
+```
+
+Every table is broken up into smaller entities called fields. The fields in the storms table consist of name, year, month, day, hour, lat, long,status, category, wind and pressure. A field is a column in a table that is designed to maintain specific information about every record in the table.
+A record, also called a row, is each individual entry that exists in a table. For example, there are 10010 records in the above Storms table. A record is a horizontal entity in a table.
+
+A column is a vertical entity in a table that contains all information associated with a specific field in a table.
+
+
+
+## Database Tables
+A database most often contains one or more tables. Each table is identified by a name (e.g. "Customers" or "Orders"). Tables contain records (rows) with data.
+
+In this tutorial we will use the well-known Storms sample database.
+
+Below is a selection from the "Storms" table:
+
+```{r echo=FALSE, message=FALSE, warning=FALSE} 
+
+y=data.frame(x)
+
+datatable(y, options = list(), class = "display",
+          callback = JS("return table;"),
+          caption = NULL, filter = c("none", "bottom", "top"), escape = TRUE,
+          style = "default", width = NULL, height = NULL, elementId = NULL,
+          fillContainer = getOption("DT.fillContainer", NULL),
+          autoHideNavigation = getOption("DT.autoHideNavigation", NULL),
+          selection = c("multiple", "single", "none"), extensions = list(),
+          plugins = NULL, editable = FALSE)
+
+```
+
+The table above contains five records (one for each record) and seven columns (name, year, month, day, hour, lat, long, status, category, wind and pressure).
+
+
+
+## SQL Statements
+Most of the actions you need to perform on a database are done with SQL statements.
+
+The following is an example of an SQL which statement selects all the records in the "Storms" table:
+
+```{r echo=TRUE, results='hide', eval=FALSE} 
+SELECT * FROM Storms;
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE} 
+x=storms[,1:11]
+
+datatable(x, options = list(), class = "display",
+    callback = JS("return table;"),
+    caption = NULL, filter = c("none", "bottom", "top"), escape = TRUE,
+    style = "default", width = NULL, height = NULL, elementId = NULL,
+    fillContainer = getOption("DT.fillContainer", NULL),
+    autoHideNavigation = getOption("DT.autoHideNavigation", NULL),
+    selection = c("multiple", "single", "none"), extensions = list(),
+    plugins = NULL, editable = FALSE)
+
+
+```
+
+
+### Semicolon after SQL Statements?
+Some database systems require a semicolon at the end of each SQL statement.
+
+Semicolon is the standard way to separate each SQL statement in database systems that allow more than one SQL statement to be executed in the same call to the server.
+
+Here, we will use semicolon at the end of each SQL statement.
+
+
+## Some of The Most Important SQL Commands
+SELECT - extracts data from a database  
+UPDATE - updates data in a database  
+DELETE - deletes data from a database  
+INSERT INTO - inserts new data into a database  
+CREATE DATABASE - creates a new database  
+ALTER DATABASE - modifies a database  
+CREATE TABLE - creates a new table  
+ALTER TABLE - modifies a table  
+DROP TABLE - deletes a table  
+CREATE INDEX - creates an index (search key)  
+DROP INDEX - deletes an index  
+
+
+
+## The SQL SELECT Statement
+The **SELECT** statement is used to select data from a database.
+
+The data returned is stored in a result table, called the result-set.
+SELECT Syntax
+
+`SELECT column1, column2, ...
+FROM table_name;
+`
+
+Here, column1, column2, ... are the field names of the table you want to select data from. If you want to select all the fields available in the table, use the following syntax:
+
+`SELECT * FROM table_name;`
+
+**SELECT Column Example:**
+
+The following SQL statement selects the "CustomerName" and "City" columns from the "Customers" table:
+```{r echo=TRUE, results='hide', eval=FALSE} 
+SELECT name, year FROM Storms;
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE} 
+select=storms[,1:2]
+
+datatable(select, options = list(), class = "display",
+    callback = JS("return table;"),
+    caption = NULL, filter = c("none", "bottom", "top"), escape = TRUE,
+    style = "default", width = NULL, height = NULL, elementId = NULL,
+    fillContainer = getOption("DT.fillContainer", NULL),
+    autoHideNavigation = getOption("DT.autoHideNavigation", NULL),
+    selection = c("multiple", "single", "none"), extensions = list(),
+    plugins = NULL, editable = FALSE)
+```
+
+
+**SELECT * Example**  
+The following SQL statement selects all the columns from the "Storms" table:
+```{r echo=TRUE, results='hide', eval=FALSE} 
+SELECT * FROM Storms;
+```
+
+
+```{r echo=FALSE, message=FALSE, warning=FALSE} 
+x=storms[,1:11]
+
+datatable(x, options = list(), class = "display",
+    callback = JS("return table;"),
+    caption = NULL, filter = c("none", "bottom", "top"), escape = TRUE,
+    style = "default", width = NULL, height = NULL, elementId = NULL,
+    fillContainer = getOption("DT.fillContainer", NULL),
+    autoHideNavigation = getOption("DT.autoHideNavigation", NULL),
+    selection = c("multiple", "single", "none"), extensions = list(),
+    plugins = NULL, editable = FALSE)
+```
+
+## The SQL WHERE Clause
+The **WHERE** clause is used to filter records.
+It is used to extract only those records that fulfill a specified condition.
+
+WHERE Syntax
+
+`SELECT column1, column2, ...
+FROM table_name
+WHERE condition;`
+
+**WHERE Clause Example**  
+The following SQL statement selects all the customers from the country "Mexico", in the "Storms" table:
+```{r echo=TRUE, results='hide', eval=FALSE} 
+SELECT * FROM Storms
+WHERE status='hurricane';
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE} 
+where<- subset(storms, status=="hurricane")
+
+datatable(where, options = list(), class = "display",
+    callback = JS("return table;"),
+    caption = NULL, filter = c("none", "bottom", "top"), escape = TRUE,
+    style = "default", width = NULL, height = NULL, elementId = NULL,
+    fillContainer = getOption("DT.fillContainer", NULL),
+    autoHideNavigation = getOption("DT.autoHideNavigation", NULL),
+    selection = c("multiple", "single", "none"), extensions = list(),
+    plugins = NULL, editable = FALSE)
+```
+
+*Text Fields vs. Numeric Fields*  
+SQL requires single quotes around text values (most database systems will also allow double quotes).
+
+However, numeric fields should not be enclosed in quotes:
+
+Example
+`SELECT * FROM Storms
+WHERE category=-1;`
+
+**Operators in The WHERE Clause**  
+*The following operators can be used in the `WHERE` clause:  
+=   Equal  
+>   Greater than  
+<    Less than  
+>=    Greater than or equal  
+<=    Less than or equal  
+<>    	Not equal. Note: In some versions of SQL this operator may be written as !=    
+BETWEEN   Between a certain range  
+LIKE    Search for a pattern  
+IN    	To specify multiple possible values for a column  
+
+## SQL AND, OR and NOT Operators
+
+**The SQL AND, OR and NOT Operators**
+The `WHERE` clause can be combined with AND, OR, and NOT operators.
+
+The `AND` and `OR` operators are used to filter records based on more than one condition:  
+
+The `AND` operator displays a record if all the conditions separated by AND are TRUE.  
+The `OR` operator displays a record if any of the conditions separated by OR is TRUE.  
+The `NOT` operator displays a record if the condition(s) is NOT TRUE.  
+
+**AND Syntax**
+
+`SELECT column1, column2, ...
+FROM table_name
+WHERE condition1 AND condition2 AND condition3 ...;`
+
+**OR Syntax**
+`SELECT column1, column2, ...
+FROM table_name
+WHERE condition1 OR condition2 OR condition3 ...;`
+
+**NOT Syntax**
+`SELECT column1, column2, ...
+FROM table_name
+WHERE NOT condition;`
+
+
+**AND Example**
+The following SQL statement selects all fields from "Storms" where the year is "1975" AND status is "hurricane":
+```{r echo=TRUE, results='hide', eval=FALSE} 
+SELECT * FROM Storms
+WHERE year='1975' AND status='hurricane';
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE} 
+and<- subset(storms, status=="hurricane" & year=="1975")
+
+datatable(and, options = list(), class = "display",
+    callback = JS("return table;"),
+    caption = NULL, filter = c("none", "bottom", "top"), escape = TRUE,
+    style = "default", width = NULL, height = NULL, elementId = NULL,
+    fillContainer = getOption("DT.fillContainer", NULL),
+    autoHideNavigation = getOption("DT.autoHideNavigation", NULL),
+    selection = c("multiple", "single", "none"), extensions = list(),
+    plugins = NULL, editable = FALSE)
+```
+
+**OR Example**
+The following SQL statement selects all fields from "Storms" where the year is "1975" OR status is "hurricane"::
+
+```{r echo=TRUE, results='hide', eval=FALSE} 
+SELECT * FROM storms
+WHERE year='1975' OR status='hurricane';
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE} 
+and<- subset(storms, status=="hurricane" | year=="1975")
+
+datatable(and, options = list(), class = "display",
+    callback = JS("return table;"),
+    caption = NULL, filter = c("none", "bottom", "top"), escape = TRUE,
+    style = "default", width = NULL, height = NULL, elementId = NULL,
+    fillContainer = getOption("DT.fillContainer", NULL),
+    autoHideNavigation = getOption("DT.autoHideNavigation", NULL),
+    selection = c("multiple", "single", "none"), extensions = list(),
+    plugins = NULL, editable = FALSE)
+```
+
+
+**NOT Example**
+The following SQL statement selects all fields from "Storms" where status is NOT "hurricane":
+
+```{r echo=TRUE, results='hide', eval=FALSE} 
+SELECT * FROM Customers
+WHERE  status!='hurricane';
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE} 
+or<- subset(storms, status!="hurricane")
+
+datatable(or, options = list(), class = "display",
+    callback = JS("return table;"),
+    caption = NULL, filter = c("none", "bottom", "top"), escape = TRUE,
+    style = "default", width = NULL, height = NULL, elementId = NULL,
+    fillContainer = getOption("DT.fillContainer", NULL),
+    autoHideNavigation = getOption("DT.autoHideNavigation", NULL),
+    selection = c("multiple", "single", "none"), extensions = list(),
+    plugins = NULL, editable = FALSE)
+```
+
+
+## Combining AND, OR and NOT
+You can also combine the AND, OR and NOT operators.
+
+The following SQL statement selects all fields from "Storms" where status is "hurricane" AND month must be "8" OR "10" (use parenthesis to form complex expressions):
+
+Example
+```{r echo=TRUE, results='hide', eval=FALSE} 
+SELECT * FROM Storms
+WHERE status='hurricane' AND (month='8' OR month='10');
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE} 
+or<- subset(storms, status=="hurricane" &(month=='8' | month=='10'))
+
+datatable(or, options = list(), class = "display",
+    callback = JS("return table;"),
+    caption = NULL, filter = c("none", "bottom", "top"), escape = TRUE,
+    style = "default", width = NULL, height = NULL, elementId = NULL,
+    fillContainer = getOption("DT.fillContainer", NULL),
+    autoHideNavigation = getOption("DT.autoHideNavigation", NULL),
+    selection = c("multiple", "single", "none"), extensions = list(),
+    plugins = NULL, editable = FALSE)
+```
+
+## SQL ORDER BY Keyword
+
+**The SQL ORDER BY Keyword**
+The ORDER BY keyword is used to sort the result-set in ascending or descending order.
+
+The `ORDER BY` keyword sorts the records in ascending order by default. To sort the records in descending order, use the DESC keyword.
+
+ORDER BY Syntax
+`SELECT column1, column2, ...
+FROM table_name
+ORDER BY column1, column2, ... ASC|DESC;`
+
+
+ORDER BY Example
+The following SQL statement selects all customers from the "Storms" table, sorted by the "name" column:
+
+Example
+```{r echo=TRUE, results='hide', eval=FALSE}
+SELECT * FROM Storms
+ORDER BY name;
+```
+
+
+```{r echo=FALSE, message=FALSE, warning=FALSE} 
+x=storms[,1:11]
+
+datatable(x, options = list(), class = "display",
+    callback = JS("return table;"),
+    caption = NULL, filter = c("none", "bottom", "top"), escape = TRUE,
+    style = "default", width = NULL, height = NULL, elementId = NULL,
+    fillContainer = getOption("DT.fillContainer", NULL),
+    autoHideNavigation = getOption("DT.autoHideNavigation", NULL),
+    selection = c("multiple", "single", "none"), extensions = list(),
+    plugins = NULL, editable = FALSE)
+```
+
+## The SQL INSERT INTO Statement
+The `INSERT INTO` statement is used to insert new records in a table.
+
+INSERT INTO Syntax
+It is possible to write the `INSERT INTO` statement in two ways:
+
+1. Specify both the column names and the values to be inserted:
+
+`INSERT INTO table_name (column1, column2, column3, ...)
+VALUES (value1, value2, value3, ...);`
+2. If you are adding values for all the columns of the table, you do not need to specify the column names in the SQL query. However, make sure the order of the values is in the same order as the columns in the table. Here, the INSERT INTO syntax would be as follows:
+
+`INSERT INTO table_name
+VALUES (value1, value2, value3, ...);`
+
+**INSERT INTO Example**
+The following SQL statement inserts a new record in the "Storms" table:
+
+Example
+```{r echo=TRUE, results='hide', eval=FALSE}
+INSERT INTO Storms (name, year, month, day, hour, lat, long,status, category, wind and pressure)
+VALUES ('Iota', '2020', '11', '19', '6', '12.7', '-76.2','hurricane', '1', '155','917');
+```
+
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+
+
+x=storms[,1:11]
+#Japan Population Data Frame - Step 1    
+new <- data.frame('Iota', '2020', '11', '19', '6', '12.7', '-76.2','hurricane', '1', '155','917')      
+
+names(new) <- c("name", "year", "month", "day", "hour", "lat", "long", "status", "category", "wind", "pressure")  
+
+#Using rbind() function to insert above observation  
+newx <- rbind(x, new)  
+
+datatable(newx, options = list(), class = "display",
+    callback = JS("return table;"),
+    caption = NULL, filter = c("none", "bottom", "top"), escape = TRUE,
+    style = "default", width = NULL, height = NULL, elementId = NULL,
+    fillContainer = getOption("DT.fillContainer", NULL),
+    autoHideNavigation = getOption("DT.autoHideNavigation", NULL),
+    selection = c("multiple", "single", "none"), extensions = list(),
+    plugins = NULL, editable = FALSE)
+```
+
+**Insert Data Only in Specified Columns**
+It is also possible to only insert data in specific columns. The rest of the columns will display "null".
+
+
+
+## SQL NULL Values
+
+**What is a NULL Value?**
+A field with a NULL value is a field with no value.
+
+If a field in a table is optional, it is possible to insert a new record or update a record without adding a value to this field. Then, the field will be saved with a NULL value.
+
+Note: A NULL value is different from a zero value or a field that contains spaces. A field with a NULL value is one that has been left blank during record creation!
+
+
+**How to Test for NULL Values?**
+It is not possible to test for NULL values with comparison operators, such as =, <, or <>.
+
+We will have to use the IS NULL and IS NOT NULL operators instead.
+
+**IS NULL Syntax**
+`SELECT column_names
+FROM table_name
+WHERE column_name IS NULL;`
+
+**IS NOT NULL Syntax**
+`SELECT column_names
+FROM table_name
+WHERE column_name IS NOT NULL;`
+
+
+## SQL UPDATE Statement
+
+The SQL UPDATE Statement
+The `UPDATE` statement is used to modify the existing records in a table.
+
+UPDATE Syntax
+`UPDATE table_name
+SET column1 = value1, column2 = value2, ...
+WHERE condition;`
+
+Note: Be careful when updating records in a table! Notice the WHERE clause in the `UPDATE` statement. The `WHERE` clause specifies which record(s) that should be updated. If you omit the WHERE clause, all records in the table will be updated!
+
+UPDATE Table
+The following SQL statement updates the record of Amy hurricane with a new year and a status
+
+Example
+```{r echo=TRUE, results='hide', eval=FALSE}
+UPDATE Storms
+SET year = '2002', status= 'Mild'
+WHERE name = 'Amy;
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+update <- subset(storms, name=="Amy")
+update$status<- "mild"
+update$year <-"2002"  
+
+
+datatable(update, options = list(), class = "display",
+    callback = JS("return table;"),
+    caption = NULL, filter = c("none", "bottom", "top"), escape = TRUE,
+    style = "default", width = NULL, height = NULL, elementId = NULL,
+    fillContainer = getOption("DT.fillContainer", NULL),
+    autoHideNavigation = getOption("DT.autoHideNavigation", NULL),
+    selection = c("multiple", "single", "none"), extensions = list(),
+    plugins = NULL, editable = FALSE)
+```
+
+## SQL DELETE Statement
+
+The SQL DELETE Statement
+The DELETE statement is used to delete existing records in a table.
+
+DELETE Syntax
+
+`DELETE FROM table_name WHERE condition;`
+
+Note: Be careful when deleting records in a table! Notice the WHERE clause in the DELETE statement. The WHERE clause specifies which record(s) should be deleted. If you omit the WHERE clause, all records in the table will be deleted!
+
+**SQL DELETE Example**
+The following SQL statement deletes the storm "Amy" from the "Storms" table:
+
+Example
+```{r echo=TRUE, results='hide', eval=FALSE}
+DELETE FROM storms WHERE name='Amy';
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+del <- subset(storms, name!="Amy")
+
+datatable(del, options = list(), class = "display",
+    callback = JS("return table;"),
+    caption = NULL, filter = c("none", "bottom", "top"), escape = TRUE,
+    style = "default", width = NULL, height = NULL, elementId = NULL,
+    fillContainer = getOption("DT.fillContainer", NULL),
+    autoHideNavigation = getOption("DT.autoHideNavigation", NULL),
+    selection = c("multiple", "single", "none"), extensions = list(),
+    plugins = NULL, editable = FALSE)
+```
+
+
+## SQL TOP, LIMIT, FETCH FIRST or ROWNUM Clause
+
+
+The SQL SELECT TOP Clause
+The SELECT TOP clause is used to specify the number of records to return.
+
+The SELECT TOP clause is useful on large tables with thousands of records. Returning a large number of records can impact performance.
+
+Note: Not all database systems support the SELECT TOP clause. MySQL supports the LIMIT clause to select a limited number of records, while Oracle uses FETCH FIRST n ROWS ONLY and ROWNUM.
+
+**SQL TOP, LIMIT and FETCH FIRST Examples**
+The following SQL statement selects the first three records from the "Customers" table (for SQL Server/MS Access):
+
+Example
+```{r echo=TRUE, results='hide', eval=FALSE}
+SELECT * FROM Customers
+LIMIT 3;
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+top <- storms[c(1:3),]
+
+
+datatable(top, options = list(), class = "display",
+    callback = JS("return table;"),
+    caption = NULL, filter = c("none", "bottom", "top"), escape = TRUE,
+    style = "default", width = NULL, height = NULL, elementId = NULL,
+    fillContainer = getOption("DT.fillContainer", NULL),
+    autoHideNavigation = getOption("DT.autoHideNavigation", NULL),
+    selection = c("multiple", "single", "none"), extensions = list(),
+    plugins = NULL, editable = FALSE)
+```
+
+ADD a WHERE CLAUSE
+The following SQL statement selects the first three records from the "Storms" table, where the country is "Germany" (for SQL Server/MS Access):
+
+Example
+```{r echo=TRUE, results='hide', eval=FALSE}
+SELECT TOP 3 * FROM Storms
+WHERE name='Doris';
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+top1 <- subset(storms, name=="Doris")
+top1 <-top1[c(1:3),]
+
+datatable(top1, options = list(), class = "display",
+    callback = JS("return table;"),
+    caption = NULL, filter = c("none", "bottom", "top"), escape = TRUE,
+    style = "default", width = NULL, height = NULL, elementId = NULL,
+    fillContainer = getOption("DT.fillContainer", NULL),
+    autoHideNavigation = getOption("DT.autoHideNavigation", NULL),
+    selection = c("multiple", "single", "none"), extensions = list(),
+    plugins = NULL, editable = FALSE)
+```
+
+## SQL MIN() and MAX() Functions
+
+The SQL MIN() and MAX() Functions
+The MIN() function returns the smallest value of the selected column.
+
+The MAX() function returns the largest value of the selected column.
+
+**MIN() Syntax**
+
+`SELECT MIN(column_name)
+FROM table_name
+WHERE condition;
+`
+
+**MAX() Syntax**
+`SELECT MAX(column_name)
+FROM table_name
+WHERE condition;`
+
+**MIN() Example**
+The following SQL statement finds the lowest pressure:
+
+Example
+```{r echo=TRUE, results='hide', eval=FALSE}
+SELECT MIN(pressure) AS lowestpressure
+FROM Storms;
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+min <- subset(storms, pressure==822)
+
+
+datatable(top1, options = list(), class = "display",
+    callback = JS("return table;"),
+    caption = NULL, filter = c("none", "bottom", "top"), escape = TRUE,
+    style = "default", width = NULL, height = NULL, elementId = NULL,
+    fillContainer = getOption("DT.fillContainer", NULL),
+    autoHideNavigation = getOption("DT.autoHideNavigation", NULL),
+    selection = c("multiple", "single", "none"), extensions = list(),
+    plugins = NULL, editable = FALSE)
+```
+
+**MAX() Example**
+The following SQL statement finds the lowest pressure:
+
+Example
+```{r echo=TRUE, results='hide', eval=FALSE}
+SELECT MAX(Price) AS LargestPrice
+FROM Products;
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+max <- subset(storms, pressure==1022)
+
+
+datatable(top1, options = list(), class = "display",
+    callback = JS("return table;"),
+    caption = NULL, filter = c("none", "bottom", "top"), escape = TRUE,
+    style = "default", width = NULL, height = NULL, elementId = NULL,
+    fillContainer = getOption("DT.fillContainer", NULL),
+    autoHideNavigation = getOption("DT.autoHideNavigation", NULL),
+    selection = c("multiple", "single", "none"), extensions = list(),
+    plugins = NULL, editable = FALSE)
+```
+
+
+## SQL COUNT(), AVG() and SUM() Functions
+
+**The SQL COUNT(), AVG() and SUM() Functions**
+The COUNT() function returns the number of rows that matches a specified criterion.
+
+**COUNT() Syntax**
+`
+SELECT COUNT(column_name)
+FROM table_name
+WHERE condition;`
+The AVG() function returns the average value of a numeric column. 
+
+**AVG() Syntax**
+`
+SELECT AVG(column_name)
+FROM table_name
+WHERE condition;`
+The SUM() function returns the total sum of a numeric column. 
+
+**SUM() Syntax**
+`
+SELECT SUM(column_name)
+FROM table_name
+WHERE condition;`
+
+
+**COUNT() Example**
+The following SQL statement finds the number of storms:
+
+Example
+```{r echo=TRUE, results='hide', eval=FALSE}
+SELECT COUNT(names)
+FROM Storms;
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+
+library(tidymodels)
+
+totalstorm <-  storms  %>% 
+  group_by(name)%>% 
+  summarise(Number=n())%>% 
+  ungroup()%>% 
+  mutate(name = reorder(name, Number))%>% 
+  select(name, Number)
+
+n<- 198
+n
+```
+
+
+Note: NULL values are not counted.
+
+**AVG() Example**
+The following SQL statement finds the average price of all products:
+
+Example
+```{r echo=TRUE, results='hide', eval=FALSE}
+SELECT AVG(temp)
+FROM Storms;
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+
+y=data.frame(storms)
+mean(y$wind)
+
+```
+
+**SUM() Example**
+The following SQL statement finds the sum of the "Pressure" fields in the "Storms" table:
+
+Example
+```{r echo=TRUE, results='hide', eval=FALSE}
+SELECT SUM(pressure)
+FROM Storms;
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+sum(y$pressure)
+```
+
+## SQL LIKE Operator
+The SQL LIKE Operator
+The `LIKE` operator is used in a WHERE clause to search for a specified pattern in a column.
+
+There are two wildcards often used in conjunction with the LIKE operator:
+
+ The percent sign (%) represents zero, one, or multiple characters
+ The underscore sign (_) represents one, single character
+Note: MS Access uses an asterisk (*) instead of the percent sign (%), and a question mark (?) instead of the underscore (_).
+
+The percent sign and the underscore can also be used in combinations!
+
+**LIKE Syntax**
+`SELECT column1, column2, ...
+FROM table_name
+WHERE column LIKE pattern;`
+Tip: You can also combine any number of conditions using AND or OR operators.
+
+Here are some examples showing different LIKE operators with '%' and '_' wildcards:
+
+LIKE Operator	Description  
+WHERE name LIKE 'a%'	Finds any storm value that start with "a"  
+WHERE name LIKE '%a'	Finds any storm values that end with "a"  
+WHERE name LIKE '%or%'	Finds any storm values that have "or" in any position  
+WHERE name LIKE '_r%'	Finds any storm values that have "r" in the second position  
+WHERE name LIKE 'a_%'	Finds any storm values that start with "a" and are at least 2 characters in length  
+WHERE name LIKE 'a__%'	Finds any storm values that start with "a" and are at least 3 characters in length  
+WHERE name LIKE 'a%o'	Finds any storm values that start with "a" and ends with "o"  
+
+**SQL LIKE Examples**
+The following SQL statement selects all storms with a name starting with "a":
+
+```{r echo=TRUE, results='hide', eval=FALSE}
+SELECT * FROM storms
+WHERE name LIKE 'a%';
+```
+
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+del <- subset(storms, name=="Amy")
+
+datatable(del, options = list(), class = "display",
+    callback = JS("return table;"),
+    caption = NULL, filter = c("none", "bottom", "top"), escape = TRUE,
+    style = "default", width = NULL, height = NULL, elementId = NULL,
+    fillContainer = getOption("DT.fillContainer", NULL),
+    autoHideNavigation = getOption("DT.autoHideNavigation", NULL),
+    selection = c("multiple", "single", "none"), extensions = list(),
+    plugins = NULL, editable = FALSE)
+```
+
+
+## SQL IN Operator
+
+The SQL IN Operator
+The IN operator allows you to specify multiple values in a WHERE clause.
+
+The IN operator is a shorthand for multiple OR conditions.
+
+IN Syntax
+`SELECT column_name(s)
+FROM table_name
+WHERE column_name IN (value1, value2, ...);`
+or:
+
+`SELECT column_name(s)
+FROM table_name
+WHERE column_name IN (SELECT STATEMENT);`
+
+**IN Operator Examples**
+The following SQL statement selects all storms that are from year "1975", "1995" or "2002":
+
+Example
+```{r echo=TRUE, results='hide', eval=FALSE}
+SELECT * FROM Customers
+WHERE year IN ('1975', '1995', '2002');
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+del <- subset(storms, year=="1975" | year=="1995" | year=="2002")
+
+datatable(del, options = list(), class = "display",
+    callback = JS("return table;"),
+    caption = NULL, filter = c("none", "bottom", "top"), escape = TRUE,
+    style = "default", width = NULL, height = NULL, elementId = NULL,
+    fillContainer = getOption("DT.fillContainer", NULL),
+    autoHideNavigation = getOption("DT.autoHideNavigation", NULL),
+    selection = c("multiple", "single", "none"), extensions = list(),
+    plugins = NULL, editable = FALSE)
+```
+
+
+## SQL BETWEEN Operator
+
+The SQL BETWEEN Operator
+The BETWEEN operator selects values within a given range. The values can be numbers, text, or dates.
+
+The BETWEEN operator is inclusive: begin and end values are included. 
+
+BETWEEN Syntax
+`SELECT column_name(s)
+FROM table_name
+WHERE column_name BETWEEN value1 AND value2;`
+
+BETWEEN Example
+The following SQL statement selects all products with a price between 10 and 20:
+
+Example
+```{r echo=TRUE, results='hide', eval=FALSE}
+SELECT * FROM Storm
+WHERE year BETWEEN 1996 AND 2001;
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+del <- subset(storms, year<="1996" & year=="2001")
+
+datatable(del, options = list(), class = "display",
+    callback = JS("return table;"),
+    caption = NULL, filter = c("none", "bottom", "top"), escape = TRUE,
+    style = "default", width = NULL, height = NULL, elementId = NULL,
+    fillContainer = getOption("DT.fillContainer", NULL),
+    autoHideNavigation = getOption("DT.autoHideNavigation", NULL),
+    selection = c("multiple", "single", "none"), extensions = list(),
+    plugins = NULL, editable = FALSE)
+```
+
+
+
+## SQL Aliases
+
+SQL Aliases
+SQL aliases are used to give a table, or a column in a table, a temporary name.
+
+Aliases are often used to make column names more readable.
+
+An alias only exists for the duration of that query.
+
+An alias is created with the AS keyword.
+
+Alias Column Syntax
+`SELECT column_name AS alias_name
+FROM table_name;
+Alias Table Syntax
+SELECT column_name(s)
+FROM table_name AS alias_name;`
+
+
+Alias for Columns Examples
+The following SQL statement creates two aliases, one for the name column and one for the category column:
+
+Example
+```{r echo=TRUE, results='hide', eval=FALSE}
+`SELECT name AS StormID, category AS StormSeverity
+FROM Storms;`
+```
+
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+
+names(x)[names(x) == "name"] <- "StormID"
+names(x)[names(x) == "category"] <- "StormSeverity"
+
+
+datatable(x, options = list(), class = "display",
+    callback = JS("return table;"),
+    caption = NULL, filter = c("none", "bottom", "top"), escape = TRUE,
+    style = "default", width = NULL, height = NULL, elementId = NULL,
+    fillContainer = getOption("DT.fillContainer", NULL),
+    autoHideNavigation = getOption("DT.autoHideNavigation", NULL),
+    selection = c("multiple", "single", "none"), extensions = list(),
+    plugins = NULL, editable = FALSE)
+```
+
+## SQL JOIN
+A JOIN clause is used to combine rows from two or more tables, based on a related column between them.
+
+Let's look at a selection from the "Orders" table:
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+orders <- data.frame(CustomerId=c(1,2,3,4,5,6,
+                              7,8,9,10,11,12),
+                 Product=c("Toaster","Radio","TV",
+                           "Toaster","Radio","TV",
+                           "Toaster","Radio","TV",
+                           "Toaster","Radio","TV"))
+
+
+datatable(orders, options = list(), class = "display",
+    callback = JS("return table;"),
+    caption = NULL, filter = c("none", "bottom", "top"), escape = TRUE,
+    style = "default", width = NULL, height = NULL, elementId = NULL,
+    fillContainer = getOption("DT.fillContainer", NULL),
+    autoHideNavigation = getOption("DT.autoHideNavigation", NULL),
+    selection = c("multiple", "single", "none"), extensions = list(),
+    plugins = NULL, editable = FALSE)
+```
+
+
+
+Then, look at a selection from the "Customers" table:
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+
+
+customer <- data.frame(CustomerId=c(1,9,3,18,5,6,7,8),
+                 State=c("Alabama","Ohio","California",
+                         "Nebraska","Alabama","Ohio",
+                         "New Jersey","Iowa"))
+
+
+datatable(customer, options = list(), class = "display",
+    callback = JS("return table;"),
+    caption = NULL, filter = c("none", "bottom", "top"), escape = TRUE,
+    style = "default", width = NULL, height = NULL, elementId = NULL,
+    fillContainer = getOption("DT.fillContainer", NULL),
+    autoHideNavigation = getOption("DT.autoHideNavigation", NULL),
+    selection = c("multiple", "single", "none"), extensions = list(),
+    plugins = NULL, editable = FALSE)
+```
+
+Notice that the "CustomerID" column in the "Orders" table refers to the "CustomerID" in the "Customers" table. The relationship between the two tables above is the "CustomerID" column.
+
+Then, we can create the following SQL statement (`that contains an `INNER JOIN`), that selects records that have matching values in both tables:
+
+Example
+```{r echo=TRUE, results='hide', eval=FALSE}
+SELECT Orders.OrderID, Customers.CustomerName, Orders.OrderDate
+FROM Orders
+INNER JOIN Customers ON Orders.CustomerID=Customers.CustomerID;
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+join <- merge(x = orders, y = customer, by = "CustomerId", all = TRUE)
+
+datatable(join, options = list(), class = "display",
+    callback = JS("return table;"),
+    caption = NULL, filter = c("none", "bottom", "top"), escape = TRUE,
+    style = "default", width = NULL, height = NULL, elementId = NULL,
+    fillContainer = getOption("DT.fillContainer", NULL),
+    autoHideNavigation = getOption("DT.autoHideNavigation", NULL),
+    selection = c("multiple", "single", "none"), extensions = list(),
+    plugins = NULL, editable = FALSE)
+```
+
+
+**Different Types of SQL JOINs**
+Here are the different types of the JOINs in SQL:
+
+`(INNER) JOIN`: Returns records that have matching values in both tables
+`LEFT (OUTER) JOIN`: Returns all records from the left table, and the matched records from the right table
+`RIGHT (OUTER) JOIN`: Returns all records from the right table, and the matched records from the left table
+`FULL (OUTER) JOIN`: Returns all records when there is a match in either left or right table
+
+![Different Types of SQL Join](/Users/mashi/Downloads/joins.PNG "Different Types of Join")
+
+
+
+
+## SQL UNION Operator
+
+The SQL UNION Operator
+The UNION operator is used to combine the result-set of two or more SELECT statements.
+
+Every SELECT statement within UNION must have the same number of columns
+The columns must also have similar data types
+The columns in every `SELECT` statement must also be in the same order
+
+**UNION Syntax**  
+`SELECT column_name(s) FROM table1
+UNION
+SELECT column_name(s) FROM table2;`
+
+**UNION ALL Syntax**  
+The UNION operator selects only distinct values by default. To allow duplicate values, use UNION ALL:
+
+`SELECT column_name(s) FROM table1
+UNION ALL
+SELECT column_name(s) FROM table2;`
+
+
+
+Let's look at a selection from the "Supplier" table:
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+orders <- data.frame(Name=c('	Exotic Liquid','New Orleans Cajun Delights', 'Grandma Kellys Homestead'),
+                 State=c("London","New Orleans","Ann Arbor"))
+
+datatable(orders, options = list(), class = "display",
+    callback = JS("return table;"),
+    caption = NULL, filter = c("none", "bottom", "top"), escape = TRUE,
+    style = "default", width = NULL, height = NULL, elementId = NULL,
+    fillContainer = getOption("DT.fillContainer", NULL),
+    autoHideNavigation = getOption("DT.autoHideNavigation", NULL),
+    selection = c("multiple", "single", "none"), extensions = list(),
+    plugins = NULL, editable = FALSE)
+```
+
+
+
+Then, look at a selection from the "Customer" table:
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+
+
+customer <- data.frame(Name=c('Alfreds Futterkiste','Ana Trujillo Emparedados y helados', 'Antonio Moreno Taquería'),
+                 State=c("Alabama","Ohio","California"))
+
+
+datatable(customer, options = list(), class = "display",
+    callback = JS("return table;"),
+    caption = NULL, filter = c("none", "bottom", "top"), escape = TRUE,
+    style = "default", width = NULL, height = NULL, elementId = NULL,
+    fillContainer = getOption("DT.fillContainer", NULL),
+    autoHideNavigation = getOption("DT.autoHideNavigation", NULL),
+    selection = c("multiple", "single", "none"), extensions = list(),
+    plugins = NULL, editable = FALSE)
+```
+
+**SQL UNION Example**
+The following SQL statement returns the cities (only distinct values) from both the "Customers" and the "Suppliers" table:
+
+Example
+```{r echo=TRUE, results='hide', eval=FALSE}
+SELECT State FROM Customers
+UNION
+SELECT State FROM Suppliers;
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+
+
+union<- union(orders, customer)
+
+
+datatable(union, options = list(), class = "display",
+    callback = JS("return table;"),
+    caption = NULL, filter = c("none", "bottom", "top"), escape = TRUE,
+    style = "default", width = NULL, height = NULL, elementId = NULL,
+    fillContainer = getOption("DT.fillContainer", NULL),
+    autoHideNavigation = getOption("DT.autoHideNavigation", NULL),
+    selection = c("multiple", "single", "none"), extensions = list(),
+    plugins = NULL, editable = FALSE)
+```
+
+
+## SQL GROUP BY Statement
+
+The SQL GROUP BY Statement
+The `GROUP BY` statement groups rows that have the same values into summary rows, like "find the number of storms in each category".
+
+The `GROUP BY` statement is often used with aggregate functions `(COUNT(), MAX(), MIN(), SUM(), AVG())` to group the result-set by one or more columns.
+
+**GROUP BY Syntax**
+`
+SELECT column_name(s)
+FROM table_name
+WHERE condition
+GROUP BY column_name(s)
+ORDER BY column_name(s);
+`
+*SQL GROUP BY Examples**
+The following SQL statement lists the number of storm in each category:
+
+Example
+```{r echo=TRUE, results='hide', eval=FALSE}
+SELECT COUNT(StormName), category
+FROM storms
+GROUP BY category;
+```
+
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+x=storms[,1:11]
+x <- initial_split(x, prop = 0.50)
+x<-data.frame(x)
+totalstorms <- x %>%
+  group_by(name, status)%>% 
+  summarise(Number=n())%>% 
+  arrange(desc=Number)%>% 
+  ungroup()%>% 
+  mutate(name = reorder(name, Number))%>% 
+  select(name, status, Number)
+
+totalstorms <- totalstorms %>%
+  group_by(status)%>% 
+  summarise(Number=n())%>% 
+  arrange(desc=Number)%>% 
+  ungroup()%>% 
+  mutate(category = reorder(status, Number))%>% 
+  select(status, Number)
+
+datatable(totalstorms, options = list(), class = "display",
+    callback = JS("return table;"),
+    caption = NULL, filter = c("none", "bottom", "top"), escape = TRUE,
+    style = "default", width = NULL, height = NULL, elementId = NULL,
+    fillContainer = getOption("DT.fillContainer", NULL),
+    autoHideNavigation = getOption("DT.autoHideNavigation", NULL),
+    selection = c("multiple", "single", "none"), extensions = list(),
+    plugins = NULL, editable = FALSE)
+```
+
+## SQL HAVING Clause
