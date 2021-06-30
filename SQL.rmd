@@ -986,7 +986,7 @@ datatable(join, options = list(), class = "display",
 ```
 
 
-**Different Types of SQL JOINs**
+### Different Types of SQL JOINs
 Here are the different types of the JOINs in SQL:
 
 `(INNER) JOIN`: Returns records that have matching values in both tables
@@ -1143,3 +1143,93 @@ datatable(totalstorms, options = list(), class = "display",
 ```
 
 ## SQL HAVING Clause
+
+The SQL HAVING Clause
+The HAVING clause was added to SQL because the WHERE keyword cannot be used with aggregate functions.
+
+**HAVING Syntax**  
+`SELECT column_name(s)
+FROM table_name
+WHERE condition
+GROUP BY column_name(s)
+HAVING condition
+ORDER BY column_name(s);`
+
+**SQL HAVING Examples**
+The following SQL statement lists the number of customers in each country. Only include countries with more than 5 customers:
+
+Example
+```{r echo=TRUE, results='hide', eval=FALSE}
+SELECT COUNT(name), category
+FROM storms
+GROUP BY category
+HAVING COUNT(name) > 15;
+```
+
+
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+
+having <- x %>%
+  group_by(name, status)%>% 
+  summarise(Number=n())%>% 
+  arrange(desc=Number)%>% 
+  ungroup()%>%  
+  mutate(name = reorder(name, Number))%>% 
+  select(name, status, Number) %>%  top_n(200, wt = Number)
+
+
+datatable(having, options = list(), class = "display",
+    callback = JS("return table;"),
+    caption = NULL, filter = c("none", "bottom", "top"), escape = TRUE,
+    style = "default", width = NULL, height = NULL, elementId = NULL,
+    fillContainer = getOption("DT.fillContainer", NULL),
+    autoHideNavigation = getOption("DT.autoHideNavigation", NULL),
+    selection = c("multiple", "single", "none"), extensions = list(),
+    plugins = NULL, editable = FALSE)
+```
+
+## Window Functions
+
+A window function performs a calculation across a set of table rows that are somehow related to the current row. This is comparable to the type of calculation that can be done with an aggregate function. But unlike regular aggregate functions, use of a window function does not cause rows to become grouped into a single output row — the rows retain their separate identities. Behind the scenes, the window function is able to access more than just the current row of the query result.
+
+In the given window function below, we can see the number of storms in each category:
+
+```{r echo=TRUE, results='hide', eval=FALSE}
+SELECT category,COUNT(DISTINCT name) number_of_storms
+FROM Storms 
+GROUP BY category
+```
+
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+totalstorms <- x %>%
+  group_by(name, status)%>% 
+  summarise(Number=n())%>% 
+  arrange(desc=Number)%>% 
+  ungroup()%>%  
+  mutate(name = reorder(name, Number))%>% 
+  select(name, status, Number) %>%  top_n(200, wt = Number)
+
+totalstorms <- totalstorms %>%
+  group_by(status)%>% 
+  summarise(Number=n())%>% 
+  arrange(desc=Number)%>% 
+  ungroup()%>% 
+  mutate(category = reorder(status, Number))%>% 
+  select(status, Number)
+
+
+datatable(totalstorms, options = list(), class = "display",
+    callback = JS("return table;"),
+    caption = NULL, filter = c("none", "bottom", "top"), escape = TRUE,
+    style = "default", width = NULL, height = NULL, elementId = NULL,
+    fillContainer = getOption("DT.fillContainer", NULL),
+    autoHideNavigation = getOption("DT.autoHideNavigation", NULL),
+    selection = c("multiple", "single", "none"), extensions = list(),
+    plugins = NULL, editable = FALSE)
+```
+
+
+Knowing how to code and manage relational databases and database-driven applications is a valuable skill for any career in tech.
+This article lists the compressive list of functions used in SQL. In short, this article is for data engineers, data analytics, data scientists, and data analysts, and database developers. It is an integral part of data models. A quick overview of basics can take you a long way in the database career and make you feel more comfortable using powerful SQL features. This is mainly because the query language deals with data extraction, data transformation, data access, and data analysis, find data patterns out from the raw data.
